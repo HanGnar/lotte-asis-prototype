@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
-<script>window.__V='2f80595a30';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='5bab12d15d';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -651,6 +651,13 @@ function openBooking(o){if(!o.keep){Object.assign(BK,JSON.parse(BK0),{date:D.tod
   if(o.movie){BK.movie=o.movie;BK.tab='movie'}else if(o.tab)BK.tab=o.tab;
   if(o.theater){const i=BK.slots.indexOf(o.theater);if(i>=0)BK.active=i;else{const j=BK.slots.indexOf(null);const k=j<0?2:j;BK.slots[k]=o.theater;BK.active=k}}
   BK.panel=!o.keep&&BK.tab==='movie'&&!BK.movie?'mv':null;renderBK();stage.classList.add('sheeted');dim.classList.add('on');sheet.classList.add('on');setBars(true);sheet.querySelector('.bk-scroll').scrollTop=o.keep?BKY:0}
+// 인원 화면 뒤로(예매 시트에서 왔을 때): 시트를 움직임 없이 먼저 깔고, 인원 화면만 시트 위에서 오른쪽으로 빠져나감(push의 반대)
+function backToSheet(el){BK_FROM=false;const i=stack.findIndex(x=>x.el===el);if(i<1)return pop();stack.splice(i,1);const prev=stack[stack.length-1];
+  const still=[sheet,dim,prev.el];still.forEach(x=>x.style.transition='none');
+  prev.el.classList.remove('under');prev.el.classList.add('top');openBooking({keep:true});
+  el.classList.remove('under');Object.assign(el.style,{zIndex:60,transition:'none',transform:'none',filter:'none',borderRadius:'0'});$('#phone').appendChild(el);void el.offsetWidth;still.forEach(x=>x.style.transition='');
+  const a=el.animate?el.animate([{transform:'translateX(0)'},{transform:'translateX(100%)'}],{duration:350,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'}):null;
+  if(a)a.onfinish=()=>el.remove();setTimeout(()=>el.remove(),600)}
 function closeBooking(){stage.classList.remove('sheeted');dim.classList.remove('on');sheet.classList.remove('on');setBars(stack[stack.length-1]?.dark)}
 function curTheater(){return BK.slots[BK.active]}
 function hhmm(t){const [h,m]=t.split(':').map(Number);return h*60+m}
@@ -839,7 +846,7 @@ function openPeople(opt){const s=SES,m=D.movies[s.m]||{t:s.m},hi=hallInfo(s);
   <div class="hd">인원선택 <small data-ps>최대 8명까지 선택 가능</small></div>${cats(s).map(k=>`<div class="prow"><span>${k}</span><span class="step"><button data-dec="${k}" aria-label="${k} 빼기">${ico.minus}</button><b data-n="${k}">0</b><button data-inc="${k}" aria-label="${k} 더하기">${ico.plusr}</button></span></div>`).join('')}
   <div style="padding:8.5px 0 0"><button class="btn off" data-go2seat>좌석 선택</button></div></div>`,'dark');
   el.dataset.ses=s.id;place(el,opt);wireNav(el);keepX(el,opt);
-  if(BK_FROM)el.querySelector('.back').addEventListener('click',()=>{BK_FROM=false;openBooking({keep:true})});   // 예매 시트에서 왔으면 뒤로 = 고르던 시트로
+  if(BK_FROM){const b=el.querySelector('.back'),nb=b.cloneNode(true);b.replaceWith(nb);nb.addEventListener('click',()=>backToSheet(el))}   // 예매 시트에서 왔으면 뒤로 = 고르던 시트로
   const upd=()=>{const tot=Object.values(PEOPLE).reduce((a,b)=>a+b,0);cats(s).forEach(k=>el.querySelector(`[data-n="${k}"]`).textContent=PEOPLE[k]);
     el.querySelector('[data-ps]').textContent=tot?cats(s).filter(k=>PEOPLE[k]).map(k=>k+' '+PEOPLE[k]).join(', '):'최대 8명까지 선택 가능';el.querySelector('[data-go2seat]').classList.toggle('off',!tot)};
   el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;const tot=Object.values(PEOPLE).reduce((a,c)=>a+c,0);
