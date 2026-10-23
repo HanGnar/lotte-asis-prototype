@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
+<script>window.__V='2f80595a30';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -260,6 +261,14 @@ img{display:block}
 .modal{position:absolute;inset:0;z-index:110;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
 .modal.pimg{display:block;background:rgba(0,0,0,.6)}
 /* 모달: 7-5 규격(폭 393.7 · r6 · 아래 빨간 띠 49.2, 제목 '알려드립니다' 가운데) */
+.modal .pbx{width:393.7px;background:#fff;border-radius:6px;overflow:hidden;text-align:center}
+.pbx h4{margin:0;padding-top:40.2px;font:400 15px/22px var(--kr);color:#141414;letter-spacing:-.25px}
+.pbx p{margin:0;padding:50.5px 8px 42.4px;font:400 15px/22.2px var(--kr);color:#141414;letter-spacing:-.25px}
+.pbx h4+p{padding-top:13px}.pbx .i19{display:block;width:59px;height:59.6px;margin:29.8px auto 0}.pbx .i19+p{padding-top:11px;padding-bottom:34.5px}
+.pbt{display:flex;align-items:center;height:49.9px;background:#e8404d}.pbt button{flex:1;height:100%;color:#fff;font:400 15px var(--kr);letter-spacing:-.3px}.pbt i{width:1px;height:14px;background:rgba(255,255,255,.75)}
+.ialert{position:relative;top:10px;width:320.6px;height:120.5px;border-radius:32px;background:rgba(246,246,246,.86);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);box-shadow:0 10px 40px rgba(0,0,0,.18);text-align:center;font-family:-apple-system,'SF Pro Text','Apple SD Gothic Neo',var(--kr)}
+.ialert p{margin:0;padding-top:22px;font-size:17px;line-height:22px;font-weight:400;color:#000;letter-spacing:-.4px}
+.ialert button{position:absolute;left:16px;right:16px;bottom:10.5px;height:48px;border-radius:24px;background:rgba(120,120,128,.16);font-size:17px;font-weight:500;color:#000}
 .modal .box{width:393.7px;background:#fff;border-radius:6px;overflow:hidden;text-align:center}
 .modal .box h4{margin:0;padding:27px 0 0;font:500 15px/20px var(--kr);color:#111;letter-spacing:-.3px}
 .modal .box p{margin:0;padding:20px 18px 26px;font:400 14.3px/22px var(--kr);color:#333;letter-spacing:-.4px;text-align:center}
@@ -545,11 +554,32 @@ const ico={
 function rateBadge(r,cls){r=r||'ALL';return `<svg class="${cls||'rt'}" viewBox="0 0 12 12"><rect width="12" height="12" rx="1.5" fill="${RATE[r]||'#888'}"/><text x="6" y="9" text-anchor="middle" font-size="${r==='ALL'?6.2:7.5}" font-weight="700" fill="#fff" font-family="Roboto,Arial">${r}</text></svg>`}
 // 실제 앱 팝업을 캡처 그대로 띄움. p={src,x,y,w,h,btn:[[x,y,w,h,'ok'|'cancel'],...]} (좌표는 화면 pt)
 // 캡처를 그대로 못 쓰는 안내는 p={title,txt}로 같은 규격(7-5)의 모달을 글자로 그림
-function popImgs(list,done){if(!list||!list.length)return done();const p=list[0];const m=document.createElement('div');m.className='modal pimg';if(p.dim!=null)m.style.background=`rgba(0,0,0,${p.dim})`;
-  if(p.txt){m.className='modal';m.innerHTML=`<div class="box">${p.title?`<h4>${p.title}</h4>`:''}<p>${p.txt}</p><button class="ok" data-i="0">확인</button></div>`;$('#phone').appendChild(m);
-    return m.addEventListener('click',e=>{if(!e.target.closest('[data-i]'))return;m.remove();popImgs(list.slice(1),done)})}
+// 회차 · 인원 · 좌석에서 뜨는 안내 팝업(v23): 캡처 이미지 대신 HTML로(글자 · 줄 위치는 캡처에서 잼: 15/22, 위 50.5 · 제목 있으면 40.2, 아래 42.6, 빨간 띠 49.9)
+//  데이터는 그대로 이미지 이름을 가리키고, 여기서 이름 → 글자로 바꿈. 표에 없는 이미지는 예전처럼 이미지로
+const TP_CH='샤롯데관은 관람 1시간 전부터 웰컴 서비스를 이용할<br>수 있습니다.<br>웰컴 음료 / 개인 무릎담요 제공 / 직원 호출 서비스는<br>샤롯데 고객만을 위한 프리미엄 서비스 입니다.<br><br>감사합니다.',
+  TP_ROW='첫 열 선택 시 1천원 할인됩니다.<br>(단, 할인요금(장애인,경로) 제외)';
+const TPOP={
+  xa11_pop0_0:{t:'알려드립니다.',x:'샤롯데 프라이빗관에서 10배의 밝기, 무한대의<br>명암비, 완벽한 실재감, 수퍼LED 스크린을<br>경험해보세요.<br><br>웰컴 음료 / 개인 무릎담요 제공 / 직원 호출 서비스는<br>샤롯데 고객만을 위한 프리미엄 서비스입니다.<br><br>감사합니다.'},
+  xa11_pop1_1:{x:'10배의 밝기, 무한대의 명암비, 완벽한 실재감,<br>세계최초 LED 스크린을 경험해보세요.'},
+  xa1_pop0_0:{t:'알려드립니다',x:TP_CH},xa2_pop0_0:{t:'알려드립니다',x:TP_CH},
+  xc9_pop0_0:{t:'알려드립니다',x:'본 상영관(7F)은 [씨네패밀리] 좌석을<br>포함하고 있습니다.<br><br>· 일반석(342석)은 일반요금이 적용됩니다.<br>· 씨네패밀리(18석)는 영화관 속에 별도 마련된 특별<br>관람부스로, 4인 또는 6인 선택 시 독립된 공간에서<br>영화를 즐길 수 있습니다.<br>· 씨네패밀리는 부스 전좌석(4인 또는 6인 / 1인 당<br>25,000원) 결제가 필요합니다. (26년 1월 1일 부)<br>· 쾌적한 관람 환경을 위해 음량 조절 기능 대신<br>최적화된 고정 볼륨 서비스를 제공하고 있습니다.'},
+  xc9_pop1_1:{x:'"전 좌석 소파석"<br>"씨네패밀리 리클라이너"<br>몸에 감기는 편안함 속 깊은 몰입을 만나보세요'},
+  xh4_pop0_0:{x:'노약자,임산부,어린이등 청각에 민감하시거나<br>질환이 있으신 고객님께서는 관람에<br>주의 부탁드립니다.'},
+  xn16_pop0_0:{x:'"전 좌석 소파석 도입"<br>몸에 감기는 편안함 속 깊은 몰입을 만나보세요'},
+  xn3_rowpop0_0:{x:TP_ROW},xh4_rowpop0_0:{x:TP_ROW},xn16_rowpop0_0:{x:TP_ROW},
+  pop19:{i19:1,x:'본 영화는 청소년 관람불가 입니다.<br>신분증 지참 부탁 드립니다.<br><br>&lt;신분증&gt;<br>주민등록증, 모바일 신분증(PASS, 정부24),<br>운전면허증, 여권<br><br>&lt;관람불가사례&gt;<br>신분증 촬영 및 캡처 사진 제시 시 관람불가<br>19세 미만 보호자 동반하여도 관람불가',b:[['취소','cancel'],['동의하고 예매하기','ok']]},
+  zero_people:{ios:1,x:'인원을 먼저 선택해주세요.',b:[['확인','cancel']]}};
+const I19='<svg class="i19" viewBox="0 0 60 60" aria-label="19세 관람불가"><rect width="60" height="60" rx="7.5" fill="#c0282f"/><path fill="#fff" d="M13.6 9.7h10.8v38.4H13.6V21.6h-3.4v-6.4zM25.4 9.7h21.6v38.4H25.4v-6.6h12.2v-9.3H25.4zM34.8 16.4v9.4h3v-9.4z" fill-rule="evenodd"/></svg>';
+function popImgs(list,done){if(!list||!list.length)return done();const p=list[0],m=document.createElement('div');
+  const k=p.src&&p.src.split('/').pop().replace(/\.\w+$/,''),T=p.txt?{t:p.title,x:p.txt}:TPOP[k];
+  const next=ok=>{m.remove();if(ok)popImgs(list.slice(1),done)};
+  if(T){const B=T.b||[['확인','ok']];m.className='modal';if(p.dim!=null)m.style.background=`rgba(0,0,0,${p.dim})`;
+    m.innerHTML=T.ios?`<div class="ialert"><p>${T.x}</p><button data-i="0" aria-label="확인">${B[0][0]}</button></div>`
+      :`<div class="pbx">${T.i19?I19:''}${T.t?`<h4>${T.t}</h4>`:''}<p>${T.x}</p><div class="pbt">${B.map((b,i)=>`${i?'<i></i>':''}<button data-i="${i}" aria-label="${b[1]==='ok'?'확인':'취소'}">${b[0]}</button>`).join('')}</div></div>`;
+    $('#phone').appendChild(m);return m.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)next(B[+b.dataset.i][1]==='ok')})}
+  m.className='modal pimg';if(p.dim!=null)m.style.background=`rgba(0,0,0,${p.dim})`;
   m.innerHTML=`<img src="${p.src}" alt="" style="position:absolute;left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px">${p.btn.map((b,i)=>`<button data-i="${i}" aria-label="${b[4]==='ok'?'확인':'취소'}" style="position:absolute;left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px"></button>`).join('')}`;
-  $('#phone').appendChild(m);m.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;m.remove();if(p.btn[+b.dataset.i][4]==='ok')popImgs(list.slice(1),done)})}
+  $('#phone').appendChild(m);m.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)next(p.btn[+b.dataset.i][4]==='ok')})}
 function toast(t){const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
 function modal(title,body,btns){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="box">${title?`<h4>${title}</h4>`:''}<p>${body}</p>${(btns||[['확인']]).map((b,i)=>`<button class="ok" data-i="${i}">${b[0]}</button>`).join('')}</div>`;$('#phone').appendChild(m);m.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const f=(btns||[[]])[+b.dataset.i][1];m.remove();f&&f()});}
 
@@ -753,7 +783,7 @@ function openSessionSheet(id){const s=findSes(id);if(!s)return toast('이 회차
   const show=()=>{const w=document.createElement('div');w.className='modal';w.style.alignItems='flex-end';
     w.innerHTML=`<div class="ssheet2"><div class="sh-h">${m.hp||m.p?`<img src="${m.hp||m.p}" alt="">`:''}<div><b>${esc(m.t)} (2D/${(s.c||[]).find(c=>/자막|더빙/.test(c))||''})</b><small>${dlabel(s.dt).slice(2)} · ${s.s} ~ ${s.e}</small><small>${esc(s.th)} · ${esc(hi.name||s.h+'관')}</small></div><button data-x>닫기</button></div>
     <div class="sh-b"><div class="scr-l">SCREEN</div>${hi.mini?`<img class="mm" src="${hi.mini}" alt="">`:''}<p>잔여좌석 <b>${s.r}</b>/${s.t}석</p><p class="rt">${ratingNotice(m)}</p><button class="btn" data-go>인원 및 좌석 선택</button></div></div>`;
-    $('#phone').appendChild(w);w.addEventListener('click',e=>{if(e.target===w||e.target.closest('[data-x]'))w.remove();if(e.target.closest('[data-go]')){w.remove();SES=s;Object.assign(PEOPLE,{성인:0,청소년:0,경로:0,장애인:0});openPeople()}})};
+    $('#phone').appendChild(w);w.addEventListener('click',e=>{if(e.target===w||e.target.closest('[data-x]'))w.remove();if(e.target.closest('[data-go]')){w.remove();BK_FROM=false;SES=s;Object.assign(PEOPLE,{성인:0,청소년:0,경로:0,장애인:0});openPeople()}})};
   if(hi.pops)return popImgs(hi.pops,show);
   if(hi.notice)return modal('알려드립니다.',hi.notice,[['확인',show]]);show()}
 
@@ -925,7 +955,7 @@ function buildHome(){const H=D.home,X=HD();
   const car=el.querySelector('[data-carousel]');car.scrollLeft=258;requestAnimationFrame(()=>car.scrollLeft=258);let t=setInterval(()=>{if(!el.classList.contains('top'))return;const w=258;if(car.scrollLeft+car.clientWidth>=car.scrollWidth-4)car.scrollTo({left:258,behavior:'smooth'});else car.scrollBy({left:w,behavior:'smooth'})},3000);
   ['pointerdown','wheel','touchstart'].forEach(ev=>car.addEventListener(ev,()=>{clearInterval(t)},{passive:true}));
 }
-window.P={openBooking,openPage,openSession,openTheater,goHome,BK,renderBK,schedOf,cfgOf,findSes,layoutOf,hallInfo,soldOf};
+window.P={popImgs,openBooking,openPage,openSession,openTheater,goHome,BK,renderBK,schedOf,cfgOf,findSes,layoutOf,hallInfo,soldOf};
 window.addEventListener('DOMContentLoaded',()=>{
   // 홈 화면에서 연 앱(standalone): 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
   const SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
