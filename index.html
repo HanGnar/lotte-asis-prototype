@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
-<script>window.__V='5bab12d15d';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='6c5266321c';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -665,9 +665,10 @@ function isPast(date,t){return date===D.today&&hhmm(t)<hhmm(D.now)}
 function renderBK(){
   const th=curTheater(),S=th?schedOf(th):null,list=S?S[BK.date]||[]:null;
   // 상영이 없는 날짜(영화 예매에서 고른 영화가 없는 날 포함)는 회색
-  const dates=D.dates.map(d=>{const off=!S||!(S[d.id]||[]).some(s=>!isPast(d.id,s.s)&&(!BK.movie||BK.tab==='theater'||s.m===BK.movie));
+  const dates=D.dates.map(d=>{const off=!S||!(S[d.id]||[]).some(s=>!isPast(d.id,s.s)&&(s.m===BK.movie||relOK(s.m,D.today))&&(!BK.movie||BK.tab==='theater'||s.m===BK.movie));
     return `<button class="date ${d.id===BK.date?'on':''} ${off&&d.id!==BK.date?'off':''}" data-date="${d.id}"><span class="w">${d.w}</span><span class="d">${d.d}</span></button>`}).join('');
-  let ses=list?list.filter(s=>!isPast(BK.date,s.s)):null;
+  // 예매 시트에는 오늘 기준 개봉한 영화만(입구에서 개봉예정 영화를 정해 들어온 경우만 그 영화를 보여 줌)
+  let ses=list?list.filter(s=>!isPast(BK.date,s.s)&&(s.m===BK.movie||relOK(s.m,D.today))):null;
   if(ses&&BK.tab==='movie'&&BK.movie)ses=ses.filter(s=>s.m===BK.movie);
   if(ses&&BK.filter==='special')ses=ses.filter(s=>s.sp);
   const hours=[];const h0=Math.min(9,...(list||[]).map(x=>+x.s.slice(0,2)));for(let h=h0;h<=24;h++)hours.push(h);
@@ -678,6 +679,7 @@ function renderBK(){
   else{
     const groups={};const order=[];
     ses.forEach(s=>{if(!groups[s.m]){groups[s.m]=[];order.push(s.m)}groups[s.m].push(s)});
+    const rk={};D.movieOrder.forEach((id,i)=>rk[id]=i);order.sort((a,b)=>(rk[a]??999)-(rk[b]??999));   // 영화 순서 = 홈 '지금 인기있는' 순위(예매순)
     if(BK.tab==='movie'&&BK.movie&&!order.length){order.push(BK.movie);groups[BK.movie]=[]}
     body=order.map((mid,gi)=>{const m=D.movies[mid]||{t:mid,r:'ALL'};const g=groups[mid].slice().sort((a,b)=>hhmm(a.s)-hhmm(b.s));
       return `<div class="mv ${gi?'blk':''}"><div class="mv-h">${m.th||m.p?`<img class="th" src="${m.th||m.p}" alt="">`:'<span class="th"></span>'}${rateBadge(m.r)}<span class="tt">${esc(m.t)}</span>${BK.tab==='movie'?'<button class="chg" data-chg>영화변경</button>':''}</div>
@@ -705,7 +707,7 @@ function theaterPanel(){
   }
   return `<div class="ph">영화관 선택<button class="x" data-pclose aria-label="닫기">${ico.x}</button></div><div class="pb"><div class="reg">${h}</div><div style="height:120px"></div></div>`}
 function moviePanel(){
-  const th=curTheater(),ids=BK.mvTab==='cur'&&th?D.movieOrderAt(th):D.movieOrder;
+  const th=curTheater(),ids=(BK.mvTab==='cur'&&th?D.movieOrderAt(th):D.movieOrder).filter(id=>relOK(id,D.today));   // 개봉예정 영화는 빼고 홈 순위대로
   return `<div class="ph m">영화 선택<button class="x" data-pclose aria-label="닫기">${ico.x}</button></div><div class="pb"><div class="mvtabs"><div class="seg"><button data-mt="cur" class="${BK.mvTab==='cur'?'on':''}">현재영화관</button><button data-mt="all" class="${BK.mvTab==='all'?'on':''}">전체</button></div><button class="sort" data-sort>${BK.sort} ${ico.chev}</button></div>
   <div class="mvgrid">${ids.map(id=>{const m=D.movies[id];return `<button data-mv="${esc(id)}" class="${m.hp?"hd":""}" aria-label="${esc(m.t)}">${m.hp?`<img src="${m.hp}" alt="${esc(m.t)}" decoding="async">${rateBadge(m.r,'rb')}<span class="mt">${esc(m.t)}</span>`:m.p?`<img src="${m.p}" alt="${esc(m.t)}" decoding="async">`:''}</button>`}).join('')}</div></div>`}
 sheet.addEventListener('click',e=>{const t=e.target.closest('button,[data-pick]');if(!t)return;const d=t.dataset;
