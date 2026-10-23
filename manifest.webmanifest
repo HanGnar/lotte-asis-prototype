@@ -1,0 +1,1 @@
+{"name": "롯데시네마 As-Is 프로토타입", "short_name": "롯데시네마", "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#ffffff", "theme_color": "#ffffff", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}
