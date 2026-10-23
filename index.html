@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
-<script>window.__V='6c5266321c';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='4dee2ff4f5';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -332,7 +332,7 @@ img{display:block}
 .hsep{position:absolute;width:1px;height:10px;background:#d6d6d6}
 .hsep2{display:inline-block;width:1px;height:9px;background:#c9c9c9;margin:0 10px;vertical-align:-.5px}
 .ptab2{position:absolute;right:18px;display:flex;align-items:center;height:20px;font:400 13px/1 var(--kr);letter-spacing:-.3px}
-.ptab2 button{color:#8a8a8a;padding:0}.ptab2 button.on{color:#000;font-weight:700}
+.ptab2 button{color:#8a8a8a;padding:0;display:inline-flex;flex-direction:column;align-items:center}.ptab2 button::after{content:attr(data-t);font-weight:700;height:0;overflow:hidden;visibility:hidden}   /* 굵은 글자 폭을 미리 잡아 눌러도 옆 탭이 안 밀림 */.ptab2 button.on{color:#000;font-weight:700}
 .ptab2 i{width:1px;height:9px;background:#cfcfcf;margin:0 7px}
 .pc{position:absolute;top:5.5px;width:140px;height:290px;background:#f8f8f8;border-radius:8px;pointer-events:none}
 .pc .pp{position:absolute;left:0;top:0;width:140px;height:200px;object-fit:cover;border-radius:8px 8px 0 0;display:block}
@@ -939,7 +939,9 @@ function buildHome(){const H=D.home,X=HD();
     +tx('롯데컬처웍스(주)<svg width="10" height="6" viewBox="0 0 10 6" style="margin-left:5px;vertical-align:2px"><path d="M1 1l4 4 4-4" fill="none" stroke="#111" stroke-width="1.2"/></svg>',15.5,2600.6,'font:400 11.2px/1 var(--kr)')
     +tx('이용약관<i class="hsep2"></i><b style="font-weight:500;color:#222">개인정보처리방침</b><i class="hsep2"></i>고객센터',16.8,2628.4,'font:400 11px/1 var(--kr);color:#8a8a8a');
   const ban=`<div class="hz ban" style="top:64px;height:330px" data-carousel>${[H.banners[H.banners.length-1],...H.banners].map(src=>{const id='ev_b'+(src.match(/banner_(\d\d)/)||[])[1];return `<a class="bn" href="#" data-go="${D.pages[id]?'page:'+id:'toast:이 이벤트 상세는 캡처하지 않았어요.'}"><img src="${src}" width="244" height="280" alt="이벤트 배너"></a>`}).join('')}<a class="ban-end" href="#" data-go="page:events" aria-label="이벤트 전체 보기"><img src="assets/home/ban_more.webp" width="50.6" height="280" alt=""></a></div>`;
-  const ptab=`<div class="ptab2" style="top:385px">${['all','now','soon'].map((k,i)=>`${i?'<i></i>':''}<button data-ptab="${k}" class="${k==='all'?'on':''}">${['전체','상영중','개봉예정'][i]}</button>`).join('')}</div>`;
+  const ptab=`<div class="ptab2" style="top:385px">${['all','now','soon'].map((k,i)=>`${i?'<i></i>':''}<button data-ptab="${k}" data-t="${['전체','상영중','개봉예정'][i]}" class="${k==='all'?'on':''}">${['전체','상영중','개봉예정'][i]}</button>`).join('')}</div>`;
+  // 전체 · 상영중 · 개봉예정 줄은 탭마다 따로 찍은 캡처라 카드 위치가 1–3pt씩 달랐음 → 모두 '전체' 줄 자리(첫 카드 24, 간격 148.2)에 맞춤
+  for(const r of Object.values(H.pop)){if(r.fixed)continue;const n=r.items.length,d=24+(n-1)*148.2-r.items[n-1].x;r.items.forEach((it,i)=>it.x=+(24+i*148.2).toFixed(1));r.w=+(r.w+d).toFixed(1);if(r.more)r.more.x=+(r.more.x+d).toFixed(1);r.fixed=1}
   const pop=Object.entries(H.pop).map(([k,r])=>{let rank=0;const seen={};r.items.forEach(it=>{if(it.title)it.rank=++rank});
     return `<div class="hz pop" data-prow="${k}" ${k==='all'?'':'hidden'} style="top:412px;height:${r.h}px"><div class="rel" style="width:${r.w}px;height:${r.h}px">${r.items.map((it,i)=>popCard(it,i,k,seen)).join('')}${r.more?`<span class="pmore" style="left:${r.more.x-30}px">+<small>더보기</small></span>`:''}${r.items.map(it=>{const mv=it.title&&D.pages['movie_'+D.movieKey(it.title)]?'page:movie_'+D.movieKey(it.title):'toast:'+encodeURIComponent((it.title||'광고')+' 상세는 캡처하지 않았어요.');const g=it.kind==='예매하기'&&it.title?'book:'+it.title:it.kind==='상세보기'?mv:'toast:광고 상세는 담지 않았어요.';return `<a class="hot" href="#" data-go="${esc(mv)}" style="left:${it.x}px;top:0;width:138px;height:212px" aria-label="${esc(it.title||'광고')}"></a><a class="hot" href="#" data-go="${esc(g)}" style="left:${it.x}px;top:248px;width:138px;height:36px" aria-label="${esc(it.kind)}"></a>`}).join('')}${r.more?`<a class="hot" href="#" data-go="page:${r.more.page}" style="left:${r.more.x-50}px;top:90px;width:100px;height:130px" aria-label="더보기"></a>`:''}</div></div>`}).join('');
   const hot=h=>`<a class="hot" href="#" style="left:${h[0]}px;top:${h[1]}px;width:${h[2]}px;height:${h[3]}px" data-go="${esc(h[4])}" aria-label="${esc(h[5]||'')}"></a>`;
