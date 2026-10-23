@@ -376,7 +376,7 @@ img{display:block}
 <li>회차 → 인원 → 좌석</li>
 <li>메뉴 → 스페셜관 / 영화관</li>
 </ol>
-<p><b>상영시간표</b><br>전국 126개 영화관 · 오늘부터 8일. 어느 영화관 · 날짜를 골라도 개봉한 모든 영화에 낮 12시 이후 일반관 회차와 스페셜관 회차가 있어요(개봉 전 영화는 개봉일부터). 영화관마다 스페셜관 종류는 4–5개예요. 월드타워 금 · 토 · 일은 실제로 딴 시간표에 빠진 영화를 22관부터 덧붙였어요. 같은 날이면 누가 열어도 같고, 예매 시트 · 영화관 상세 · 영화 '예매하기' 어디로 들어가도 같은 회차가 나와요.</p>
+<p><b>상영시간표</b><br>전국 126개 영화관 · 오늘부터 8일. 회차는 영화관마다 하루 70–85개로, 시간대가 군데군데 비고 영화 · 관마다 시작 시각이 달라요. 어느 영화관 · 날짜를 골라도 개봉한 모든 영화에 낮 12시 이후 회차가 하나 이상 있고, 스페셜관 회차는 인기 영화는 매일 · 나머지는 며칠씩 있어요(개봉 전 영화는 개봉일부터). 영화관마다 스페셜관 종류는 4–5개예요. 월드타워 금 · 토 · 일은 실제로 딴 시간표를 줄여 쓰고(저녁 8시 이후 스페셜관은 그대로) 빠진 영화를 22관부터 덧붙였어요. 예매는 열 때마다 '영화관 예매' 처음 화면부터 시작해요. 같은 날이면 누가 열어도 같고, 예매 시트 · 영화관 상세 · 영화 '예매하기' 어디로 들어가도 같은 회차가 나와요.</p>
 <p><b>담은 데이터</b><br>극장 목록 전체, 영화 58편, 영화 상세 41편, 홈 배너 · 이벤트 상세</p>
 <p><b>좌석</b><br>좌석 배치는 월드타워 각 관 캡처에서 땄고, 팔린 자리는 회차의 남은 좌석 수에 맞춰 임의로 칠했어요. 다른 영화관 · 12관은 좌석 수가 비슷한 월드타워 관 배치를 빌려 써요. 인원을 안 고르고 '좌석 선택'을 누르면 실제처럼 안내가 떠요.</p>
 <p><b>스페셜관 9종</b><br>샤롯데 · 수퍼플렉스 · 수퍼LED · 수퍼MX4D · 광음시네마 · 광음LED · 리클라이너 · 씨네패밀리 · 씨네커플. 안내 팝업과 좌석 배치는 종류마다 대표 관에서 딴 것을 써요. 씨네패밀리는 4 · 6인 부스라 2명은 좌석을 고를 수 없어요(실제와 같음).</p>
@@ -458,42 +458,58 @@ function cfgOf(th){if(CFG[th])return CFG[th];const R=rngOf('cfg|'+th),pick=a=>a[
   return CFG[th]={halls}}
 const LANG={'극장판 치이카와: 인어 섬의 비밀':['자막','더빙'],'케이온':['자막']},EVT=/공연|기타|러닝타임/;
 const m2t=n=>`${pad(Math.floor(n/60))}:${pad(n%60)}`;
-// 하루 시간표: 관마다 아침(주말 7:50–, 주중 8:30–)부터 23:50 전까지 '상영시간 + 광고 10분 + 정리 15–35분' 간격으로, 가장 먼저 비는 관부터 채움.
-//  ① 그날 상영하는 모든 영화가 일반관 1회 · 스페셜관 1회를 꼭 갖도록 '빠진 영화' 목록을 낮 12시 이후에 고르게 나눠 넣고(영화관마다 시간이 다르게 섞음)
-//  ② 나머지 자리는 예매순이 높은 영화일수록 자주. 남은 좌석은 시간대 · 주말 · 순위 · 며칠 뒤인지로
+// 하루 시간표(v22, 회차를 예전의 약 40%로): 관마다 첫 회차를 9시–14시 사이로 흩고, 회차 사이에 '상영시간 + 광고 10분 + 정리 15–35분' 뒤로
+//  빈 시간(대개 1시간 반–6시간)을 둬서 관 · 영화마다 시작 시각과 간격이 다르게. 영화관마다 그날 아무 회차도 시작하지 않는 시간대 2–3개를 둠
+//  ① 그날 상영하는 모든 영화는 낮 12시 이후 회차 1개 이상(씨네패밀리 제외 아무 관) ② 스페셜관 회차는 예매순 상위 8편은 매일,
+//  나머지는 영화관 · 영화마다 8일 중 며칠(하루는 꼭) ③ 남은 자리는 예매순이 높은 영화일수록 자주. 남은 좌석은 시간대 · 주말 · 순위 · 며칠 뒤인지로
 //  base: 이미 있는 회차(월드타워 찍은 날) → 빠진 영화만 덧붙인 관(22관–)에 넣음
+const spDay=(th,id,di,rk)=>{const f=Math.max(0,D.dates.findIndex(d=>relOK(id,d.id)));return rk<8||di===f+hashS(th+'|spd|'+id)%(D.dates.length-f)||rngOf(th+'|spd|'+id+'|'+di)()<.3};
 function genDay(th,dt,di,base){const cfg=cfgOf(th),R=rngOf(th+'|'+dt),dw=dowOf(dt),wkend=dw===0||dw===5||dw===6;
   const mix=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const rk={};D.movieOrder.forEach((id,i)=>rk[id]=i);
   const mv=D.movieOrder.filter(id=>relOK(id,dt));
   const pool=mv.map(id=>[id,Math.pow(1/(rk[id]+2),1.15)*(EVT.test(D.movies[id].g||'')?.3:1),rk[id]]);
-  const draw=pw=>{const ws=pool.map(p=>Math.pow(p[1],pw));let x=R()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<pool.length;i++){x-=ws[i];if(x<=0)return pool[i][0]}return pool[0][0]};
-  const req=sp=>!!sp&&sp!=='cineFamily';   // 스페셜관 필수 회차를 맡을 수 있는 관
-  const hasR=new Set(),hasS=new Set();(base||[]).forEach(s=>{if(s.s<'12:00')return;if(req(s.spl))hasS.add(s.m);else if(!s.spl)hasR.add(s.m)});
-  const need={r:mix(mv.filter(id=>!hasR.has(id))),s:mix(mv.filter(id=>!hasS.has(id)))};
-  const hs=cfg.halls.filter(H=>!base||H.h>21).map(H=>({H,tm:(wkend?470:510)+Math.floor(R()*12)*10+(/CHARLOTTE|cineFamily|씨네커플/.test(H.spl||'')?90:0)}));
-  // 남은 자리 수(낮 12시 이후만 셈): 필수 회차는 낮 12시–밤에 두어 낮에 평가해도 지나간 회차가 되지 않게
-  const slots=kind=>hs.reduce((a,x)=>{const t=Math.max(x.tm,720);return a+((kind==='s'?req(x.H.spl):!x.H.spl)&&t<=1430?Math.floor((1430-t)/150)+1:0)},0);
+  const mvAt={};   // 영화별 이미 넣은 시작 시각: 2시간 안에 같은 영화가 또 나오면 덜 뽑음(회차가 한 시간대에 몰리지 않게)
+  const draw=(pw,tm)=>{const ws=pool.map(p=>Math.pow(p[1],pw)*((mvAt[p[0]]||[]).filter(t=>Math.abs(t-tm)<120).length?.02:1));let x=R()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<pool.length;i++){x-=ws[i];if(x<=0)return pool[i][0]}return pool[0][0]};
+  const req=sp=>sp!=='cineFamily';   // 필수 회차를 맡을 수 있는 관(씨네패밀리는 2명이 못 고르는 부스라 뺌)
+  const hasA=new Set(),hasS=new Set();(base||[]).forEach(s=>{if(s.s<'12:00'||!req(s.spl))return;hasA.add(s.m);if(s.spl)hasS.add(s.m)});
+  const need={s:mix(mv.filter(id=>!hasS.has(id)&&spDay(th,id,di,rk[id]))),a:[]};need.a=mix(mv.filter(id=>!hasA.has(id)&&!need.s.includes(id)));
+  // 아무 회차도 시작하지 않는 시간대(10–22시 중 2–3개)
+  const quiet=new Set();for(let q=2+(R()<.5?1:0);quiet.size<q;)quiet.add(10+Math.floor(R()*13));
+  const idle=()=>R()<.12?0:120+Math.floor(R()*R()*300/5)*5+Math.floor(R()*18)*5;
+  const hs=cfg.halls.filter(H=>!base||H.h>21).map(H=>{const t=(R()<.3?540+Math.round(R()*120/5)*5:660+Math.round(R()*240/5)*5)+(/CHARLOTTE|cineFamily|씨네커플/.test(H.spl||'')?60:0);return {H,tm:t,free:t}});
   const out=[],code=THC[th]||'wt';let n=0;
-  const put=(x,id)=>{const H=x.H,sp=H.spl,S=SPK[sp]||{},m=D.movies[id],run=m.run||110,e=x.tm+run+10,L=LANG[id],lang=L?L[Math.floor(R()*L.length)]:null,tm=x.tm;
+  const put=(x,id,at)=>{const H=x.H,sp=H.spl,S=SPK[sp]||{},m=D.movies[id],run=m.run||110,tm=at,e=tm+run+10,L=LANG[id],lang=L?L[Math.floor(R()*L.length)]:null;
     const occ=(tm<660?.12:tm<900?.25:tm<1080?.38:tm<1290?.55:.3)*(wkend?1.35:1)*(1.35-Math.min(1,rk[id]/25)*.85)*[1,.8,.66,.56,.48,.42,.37,.33][di]*(sp==='CHARLOTTE'?1.3:1)*(.5+R());
     const c=[...(S.ch?[S.ch]:[]),...(H.atmos?['Atmos']:[]),...(lang?[lang]:[]),'2D'];
+    (mvAt[id]=mvAt[id]||[]).push(tm);
     out.push({id:`${code}.${base?'x':''}${n++}@${dt}`,th,dt,m:id,h:H.h,s:m2t(tm),e:m2t(e),r:H.t-Math.min(H.t-1,Math.round(H.t*Math.min(.98,occ))),t:H.t,c,spl:sp,sp:!!sp,jo:tm<=600,nt:false,hk:H.hk,lay:H.lay});
-    x.tm=Math.ceil((e+15+R()*20)/5)*5;
-    if(tm>=720)for(const k of ['r','s']){const kindOK=k==='s'?req(sp):!sp,i=need[k].indexOf(id);if(kindOK&&i>=0)need[k].splice(i,1)}};   // 오전 회차는 필수로 치지 않음
+    x.free=Math.ceil((e+15+R()*20)/5)*5;if(!x.gap)x.tm=x.free+Math.round(idle()*(/cineFamily|씨네커플/.test(sp||'')?1.6:1)/5)*5;
+    if(tm>=720&&req(sp))for(const k of sp?['s','a']:['a']){const i=need[k].indexOf(id);if(i>=0)need[k].splice(i,1)}};   // 오전 회차는 필수로 치지 않음
+  // 남은 자리 수(낮 12시 이후, 회차 간격 약 5시간으로 셈)
+  const slots=kind=>hs.reduce((a,x)=>{const t=Math.max(x.tm,720);return a+((kind==='s'?x.H.spl&&req(x.H.spl):req(x.H.spl))&&t<=1430?Math.floor((1430-t)/300)+1:0)},0);
   for(;;){let x=null;for(const y of hs)if(y.tm<=1430&&(!x||y.tm<x.tm))x=y;if(!x)break;
-    const k=req(x.H.spl)?'s':x.H.spl?null:'r';let id=null;
-    if(k&&need[k].length&&x.tm>=720){const left=slots(k);if(need[k].length>=left-1||R()<need[k].length/left*1.5)id=need[k][need[k].length-1]}
-    put(x,id||draw(x.H.spl?1.6:1))}
-  // 그래도 남은 영화(관이 모자랄 때)는 그 종류 관 중 가장 먼저 끝나는 관 뒤에 이어 붙임
-  for(const k of ['r','s'])while(need[k].length){const c=hs.filter(x=>k==='s'?req(x.H.spl):!x.H.spl).sort((a,b)=>a.tm-b.tm)[0];if(!c)break;put(c,need[k][need[k].length-1])}
+    const hr=Math.floor(x.tm/60);if(quiet.has(hr)){x.tm=(hr+1)*60+Math.floor(R()*6)*5;continue}
+    let id=null;
+    for(const k of ['s','a']){if(id||!need[k].length||x.tm<720||(k==='s'?!(x.H.spl&&req(x.H.spl)):!req(x.H.spl)))continue;
+      const left=slots(k);if(need[k].length>=left-1||R()<need[k].length/left*1.6)id=need[k][need[k].length-1]}
+    put(x,id||draw(x.H.spl?1.6:1,x.tm),x.tm)}
+  // 그래도 남은 영화는 그 종류 관의 빈 시간(12시 이후, 앞 회차 정리 뒤 · 다음 회차 15분 전까지 들어가는 곳)에 넣음
+  const t2m=t=>+t.slice(0,2)*60+ +t.slice(3);
+  for(const k of ['s','a'])while(need[k].length){const id=need[k][need[k].length-1],len=(D.movies[id].run||110)+10+15;let best=null;
+    for(const x of hs){if(k==='s'?!(x.H.spl&&req(x.H.spl)):!req(x.H.spl))continue;
+      const l=out.filter(o=>o.h===x.H.h).map(o=>[t2m(o.s),t2m(o.e)]).sort((a,b)=>a[0]-b[0]);
+      for(let i=0;i<=l.length;i++){let g=Math.max(720,i?Math.ceil((l[i-1][1]+20)/5)*5:720);if(quiet.has(Math.floor(g/60)))g=(Math.floor(g/60)+1)*60+5;
+        const lim=i<l.length?l[i][0]:1430+len;if(g<=1430&&g+len<=lim&&(!best||g<best[1])){best=[x,g];break}}}
+    if(!best)break;best[0].gap=1;put(best[0],id,best[1]);best[0].gap=0}
+  out.sort((a,b)=>a.s<b.s?-1:a.s>b.s?1:0);
   return out}
 const SCH={},SESIDX={};
 // 캡처에서 남은 좌석 숫자를 못 읽은 회차(월드타워 금 4개)는 관 좌석 수의 80%로 채움
 const fillR=(th,x)=>{const t=x.t||(cfgOf(th).halls.find(h=>h.h===x.h)||{}).t||(D.layouts[th+'|'+x.h]||{seats:[]}).seats.length||100;return {t,r:Math.max(1,Math.round(t*.8))}};
 function schedOf(th){if(SCH[th])return SCH[th];const o={};
   D.dates.forEach((d,i)=>{const src=th==='월드타워'&&TPL[th]&&TPL[th][TPLDAY[dowOf(d.id)]];
-    let l;if(src){l=src.map(x=>Object.assign({},x,{id:x.id+'@'+d.id,th,dt:d.id},x.h===19?{spl:'MX4D',sp:true}:{},x.r==null?fillR(th,x):{}));l=l.concat(genDay(th,d.id,i,l))}else l=genDay(th,d.id,i);
+    let l;if(src){l=src.filter(x=>(x.spl&&x.s>='19:30')||rngOf('keep|'+x.id)()<.4).map(x=>Object.assign({},x,{id:x.id+'@'+d.id,th,dt:d.id},x.h===19?{spl:'MX4D',sp:true}:{},x.r==null?fillR(th,x):{}));l=l.concat(genDay(th,d.id,i,l))}else l=genDay(th,d.id,i);
     l.forEach(s=>SESIDX[s.id]=s);o[d.id]=l});
   return SCH[th]=o}
 D.movieOrderAt=th=>{const S=schedOf(th),has=new Set();for(const dt in S)S[dt].forEach(s=>has.add(s.m));return D.movieOrder.filter(id=>has.has(id))};
@@ -543,7 +559,7 @@ function setBars(dark){sb.classList.toggle('light',!!dark);hb.classList.toggle('
 function push(el,opt){opt=opt||{};el.classList.add('scr');if(!opt.instant&&!opt.noanim)el.classList.add('push-in');stage.appendChild(el);const prev=stack[stack.length-1];stack.push({el,dark:opt.dark});prev&&prev.el.classList.remove('top');el.classList.add('top');
   requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.remove('push-in');prev&&!opt.instant&&!opt.noanim&&prev.el.classList.add('under')}));setBars(opt.dark);if(opt.instant&&prev){prev.el.remove();stack.splice(stack.length-2,1)}}
 function pop(){if(stack.length<2)return;const cur=stack.pop(),prev=stack[stack.length-1];cur.el.classList.add('push-in');prev.el.classList.remove('under');prev.el.classList.add('top');setBars(prev.dark);setTimeout(()=>cur.el.remove(),360)}
-function goHome(){while(stack.length>1){stack.pop().el.remove()}const h=stack[0];h.el.classList.remove('under');h.el.classList.add('top');setBars(false)}
+function goHome(){BK_FROM=false;while(stack.length>1){stack.pop().el.remove()}const h=stack[0];h.el.classList.remove('under');h.el.classList.add('top');setBars(false)}
 function scr(html,cls){const d=document.createElement('section');d.className=cls||'';d.innerHTML=html;return d}
 function navBar(title){return `<div class="nav"><button class="back" aria-label="뒤로">${ico.back}</button><button class="home" aria-label="홈">${ico.home}</button><h2>${esc(title)}</h2></div>`}
 function wireNav(el){const h=el.querySelector('.nav h2');if(h)requestAnimationFrame(()=>{h.style.left=Math.max(103.6,215-h.offsetWidth/2)+'px'});el.querySelector('.back')?.addEventListener('click',pop);el.querySelector('.home')?.addEventListener('click',goHome)}
@@ -598,9 +614,13 @@ function openMovie(id){const m=D.movies[id];if(!m){toast('이 영화 상세는 �
 /* ---------- booking sheet ---------- */
 const BK={tab:'movie',slots:[D.defaultTheater,null,null],active:0,date:D.today,filter:'all',hour:null,movie:null,panel:null,picking:0,region:null,mvTab:'cur',sort:'예매순'};
 const sheet=$('#sheet'),dim=$('#dim');
-function openBooking(o){if(o.movie){BK.movie=o.movie;BK.tab='movie'}else if(o.tab)BK.tab=o.tab;else if(!BK.movie)BK.tab='theater';
+// 예매 진입(v22): 홈 · 다른 화면에서 새로 열 때는 항상 처음 상태(영화관 예매, 영화 · 날짜 · 시간 선택 없음).
+//  예매 과정 안에서 돌아올 때(인원 화면 뒤로)만 keep으로 고른 상태를 그대로 둠
+const BK0=JSON.stringify(Object.assign({},BK,{tab:'theater',movie:null}));let BKY=0,BK_FROM=false;
+function openBooking(o){if(!o.keep){Object.assign(BK,JSON.parse(BK0),{date:D.today});BKY=0}
+  if(o.movie){BK.movie=o.movie;BK.tab='movie'}else if(o.tab)BK.tab=o.tab;
   if(o.theater){const i=BK.slots.indexOf(o.theater);if(i>=0)BK.active=i;else{const j=BK.slots.indexOf(null);const k=j<0?2:j;BK.slots[k]=o.theater;BK.active=k}}
-  BK.panel=null;renderBK();stage.classList.add('sheeted');dim.classList.add('on');sheet.classList.add('on');setBars(true);sheet.querySelector('.bk-scroll').scrollTop=0}
+  BK.panel=!o.keep&&BK.tab==='movie'&&!BK.movie?'mv':null;renderBK();stage.classList.add('sheeted');dim.classList.add('on');sheet.classList.add('on');setBars(true);sheet.querySelector('.bk-scroll').scrollTop=o.keep?BKY:0}
 function closeBooking(){stage.classList.remove('sheeted');dim.classList.remove('on');sheet.classList.remove('on');setBars(stack[stack.length-1]?.dark)}
 function curTheater(){return BK.slots[BK.active]}
 function hhmm(t){const [h,m]=t.split(':').map(Number);return h*60+m}
@@ -767,7 +787,7 @@ function miniMap(s,L,box){const sold=soldOf(s,L);const x0=Math.min(...L.seats.ma
   return `<div class="mmap" style="left:${bx}px;top:${by}px;width:${bw}px;height:${bh}px"><span class="ms">SCREEN</span>${L.seats.map(q=>`<i style="left:${(ox+(q[1]-x0)*k).toFixed(1)}px;top:${(oy+(q[2]-y0)*k).toFixed(1)}px;width:${(q[3]*k*.8).toFixed(1)}px;height:${(q[4]*k*.75).toFixed(1)}px;background:${sold.has(q[0])?'#8c8c8c':seatCol(L,q[5])}"></i>`).join('')}<b class="vp" data-vp="${[k,ox,oy,x0,x1,y0,y1].map(v=>v.toFixed(3)).join(',')}" style="left:${(ox+(Math.max(vx,x0)-x0)*k).toFixed(1)}px;top:${(oy-2).toFixed(1)}px;width:${(Math.min(vw,x1-x0)*k).toFixed(1)}px;height:${(Math.min(vh,y1-y0+4)*k).toFixed(1)}px"></b></div>`}
 function openSession(id){const s=findSes(id);if(!s)return;if(isPast(s.dt,s.s)){toast('상영 시간이 지난 회차예요.');return}
   const hi=hallInfo(s);
-  const go=()=>{SES=s;Object.assign(PEOPLE,{성인:0,청소년:0,경로:0,장애인:0});closeBooking();setTimeout(()=>openPeople(),120)};
+  const go=()=>{SES=s;Object.assign(PEOPLE,{성인:0,청소년:0,경로:0,장애인:0});BK_FROM=sheet.classList.contains('on');if(BK_FROM)BKY=sheet.querySelector('.bk-scroll').scrollTop;closeBooking();setTimeout(()=>openPeople(),120)};
   if(hi.pops)return popImgs(hi.pops,go);
   if(hi.notice)return modal('알려드립니다.',hi.notice,[['확인',go]]);go()}
 function dlabel(dt){const d=D.dates.find(x=>x.id===dt);return `${dt.replace(/-/g,'.')}(${d?d.dow:''})`}
@@ -789,6 +809,7 @@ function openPeople(opt){const s=SES,m=D.movies[s.m]||{t:s.m},hi=hallInfo(s);
   <div class="hd">인원선택 <small data-ps>최대 8명까지 선택 가능</small></div>${cats(s).map(k=>`<div class="prow"><span>${k}</span><span class="step"><button data-dec="${k}" aria-label="${k} 빼기">${ico.minus}</button><b data-n="${k}">0</b><button data-inc="${k}" aria-label="${k} 더하기">${ico.plusr}</button></span></div>`).join('')}
   <div style="padding:8.5px 0 0"><button class="btn off" data-go2seat>좌석 선택</button></div></div>`,'dark');
   el.dataset.ses=s.id;place(el,opt);wireNav(el);keepX(el,opt);
+  if(BK_FROM)el.querySelector('.back').addEventListener('click',()=>{BK_FROM=false;openBooking({keep:true})});   // 예매 시트에서 왔으면 뒤로 = 고르던 시트로
   const upd=()=>{const tot=Object.values(PEOPLE).reduce((a,b)=>a+b,0);cats(s).forEach(k=>el.querySelector(`[data-n="${k}"]`).textContent=PEOPLE[k]);
     el.querySelector('[data-ps]').textContent=tot?cats(s).filter(k=>PEOPLE[k]).map(k=>k+' '+PEOPLE[k]).join(', '):'최대 8명까지 선택 가능';el.querySelector('[data-go2seat]').classList.toggle('off',!tot)};
   el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;const tot=Object.values(PEOPLE).reduce((a,c)=>a+c,0);
