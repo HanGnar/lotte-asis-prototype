@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
-<script>window.__V='1486de9de6';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='4f1df7f388';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -329,6 +329,7 @@ img{display:block}
 .tt-c .rm{position:absolute;left:9.7px;top:30.5px;font:400 10.8px/14px var(--num);color:#8a8a8a}
 .tt-c .rm b{font-weight:500;color:var(--green)}
 .tt-c .hl{position:absolute;right:8.5px;top:30px;font:400 11.2px/14px var(--kr);color:#111}
+.tt-c .hl{width:auto;height:auto;background:none;border-radius:0;overflow:visible}.tt-c .hl::after{display:none}   /* 홈 카드 .hl(검은 상자)이 관 번호에 덮이던 것 막음 */
 .tt-c.past{opacity:.35}
 /* 홈(HTML 글자): 2026-10-23 캡처 글자를 지운 바탕 위에 같은 자리 · 크기로 */
 .htx{position:absolute;white-space:nowrap;color:#000;letter-spacing:-.3px}
@@ -572,6 +573,112 @@ button.c{padding:0;background:none;cursor:pointer}
 .splay *{all:revert}   /* 앱 전체 규칙(img block · button 초기화 · border-box)이 떠 온 레이어에 닿지 않게: 브라우저 기본값 + 인라인 스타일만 */
 .splay a{color:inherit;text-decoration:none}
 .splay [hidden]{display:none!important}
+/* 메뉴 > 영화별 예매(v32): 치수는 캡처/mb(미러링 2026-10-25)에서 잼, 1pt = 1.5442px */
+.mb .nav{background:#fff}
+.mbsteps{position:absolute;left:0;right:0;top:110px;height:74px;display:flex;background:#303030;z-index:4}
+.mbsteps button{position:relative;flex:1;height:74px;background:#303030;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;text-align:center}
+.mbsteps button+button{border-left:1.3px solid #3c3c3c}
+.mbsteps button.on{background:#000}
+.mbsteps b{font:700 13px/18px var(--kr);letter-spacing:-.5px;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+.mbsteps b.one{font-size:13.2px;position:relative;top:2px}
+.mbsteps small{font:400 11px/15px var(--kr);color:#d0d0d0;letter-spacing:-.3px;margin-bottom:3.5px}
+.mbst{position:absolute;left:0;right:0;top:184px;bottom:0}
+.mbbody{position:absolute;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.mbbody::-webkit-scrollbar{display:none}
+/* 영화 선택 */
+.mbsub{position:absolute;left:0;right:0;top:0;height:41.4px;border-bottom:.7px solid #d2d2d2;background:#fff;padding-left:19.3px;display:flex;gap:21.1px}
+.mbsub button{position:relative;height:41.4px;padding:0 2px;font:400 11.7px/1 var(--kr);color:#8b8b8b;letter-spacing:-.4px}
+.mbsub button.on{color:#111}
+.mbsub button.on:after{content:'';position:absolute;left:0;right:0;bottom:-.7px;height:1.9px;background:#000}
+.mbst>.mbbody:not(.mbtt){top:42px}
+.mbr{position:relative;height:135.3px;border-bottom:1.3px solid #eaeaea;cursor:pointer}
+.mbr .po{position:absolute;left:18.1px;top:19.4px;width:68px;height:96.5px;overflow:hidden;background:#eee}
+.mbr .po img{width:100%;height:100%;object-fit:cover;display:block}
+.mbr .po .rb{position:absolute;right:3px;top:4.5px;width:15.6px;height:15.6px}
+.mbr .rk{position:absolute;left:3.5px;bottom:-1px;font:italic 700 19px/1 var(--num);color:#fff;text-shadow:0 0 3px rgba(0,0,0,.55);letter-spacing:-.5px}
+.mbr .tx{position:absolute;left:99.1px;right:62px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;padding:3.9px 0 2px}
+.mbr .tg{display:block;width:33px;height:18.6px;margin:0 0 6.5px}
+.mbr .t{font:400 14.9px/20px var(--kr);color:#111;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:285px}
+.mbr .d{margin:4.3px 0 0;font:400 10.7px/15px var(--num);color:#222;letter-spacing:-.2px;white-space:nowrap}
+.mbr .d span{font-family:var(--kr);color:#777;margin-right:7.5px}
+.mbr .d i,.mbr .r i{display:inline-block;width:1px;height:9px;background:#cfcfcf;margin:0 5.5px;vertical-align:-.5px}
+.mbr .d em{font-style:normal;color:#e8404d}
+.mbr .r{margin:4px 0 0;display:flex;align-items:center;font:400 10.7px/15px var(--kr);color:#111;letter-spacing:-.3px;white-space:nowrap}
+.mbr .r svg:first-child{margin-right:3px}
+.mbr .r b{font:700 11px/15px var(--num)}
+.mbr .r a{color:#111;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.mbr .ck{position:absolute;left:381px;top:54.3px;width:28px;height:28px}
+.mbr .ck svg{display:block}
+/* 영화관 선택 */
+.mbthtabs{position:absolute;left:0;right:0;top:0;height:42px;display:flex;padding:0 14px;border-bottom:.7px solid #d6d6d6;background:#fff}
+.mbthtabs button{position:relative;flex:1;font:400 15.6px/42px var(--kr);padding-top:2.4px;color:#a3a3a3;letter-spacing:-.4px}
+.mbthtabs button.on{color:#111}
+.mbthtabs button.on:after{content:'';position:absolute;left:0;right:0;bottom:-.7px;height:1.9px;background:#000}
+.mbth{position:absolute;left:0;right:0;top:42.6px;bottom:0;background:#f5f5f5}
+.mbth .l{position:absolute;left:0;top:0;width:143.8px;bottom:0;background:#fff;overflow-y:auto;scrollbar-width:none}
+.mbth .l button{position:relative;display:flex;align-items:center;width:100%;height:44.1px;padding:0 0 0 17.5px;border-bottom:1px solid #ececec;background:#fff;font:400 14.3px/1 var(--kr);color:#111;letter-spacing:-.5px;text-align:left;white-space:nowrap}
+.mbth .l button small{font-size:8.6px;letter-spacing:-.4px;margin-left:.5px;align-self:center;padding-top:3px}
+.mbth .l button.on{background:#f5f5f5}
+.mbth .l button svg{position:absolute;left:125px;top:18.5px}
+.mbth .r{position:absolute;left:143.8px;right:0;top:0;bottom:0;overflow-y:auto;scrollbar-width:none}
+.mbth .r::-webkit-scrollbar,.mbth .l::-webkit-scrollbar{display:none}
+.mbth .r>button{position:relative;display:flex;align-items:center;width:100%;height:44.6px;padding:0 0 0 17.4px;border-bottom:1px solid #ebebeb;font:400 14.3px/1 var(--kr);color:#111;letter-spacing:-.5px;text-align:left;white-space:nowrap}
+.mbth .r>button.off{color:#bdbdbd;cursor:default}
+.mbth .r>button span{position:absolute;right:28px;font:400 13px/1 var(--kr);color:#111}
+.mbth .r>button.off span{color:#bdbdbd}
+.mbmy{padding-top:114px;text-align:center}
+.mbmy p{margin:0;font:400 12px/18px var(--kr);color:#777;letter-spacing:-.4px}
+.mbmy button{margin-top:9px;height:22px;padding:0 13px;border:1px solid #333;border-radius:11px;background:#fff;font:400 10.5px/20px var(--kr);color:#111;letter-spacing:-.4px}
+/* 날짜 / 시간 선택 */
+.mbds{position:absolute;left:0;right:0;top:0;height:81.6px;background:#f8f8f8;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.mbds::-webkit-scrollbar,.mbf::-webkit-scrollbar{display:none}
+.mbds:after{content:'';position:absolute;left:418px;top:0;width:1px;height:1px}
+.mbds button{position:absolute;top:0;width:49.8px;height:81.6px;color:#111}
+.mbds .mo{position:absolute;left:0;right:0;top:7.5px;font:700 10px/12px var(--kr);color:#111;letter-spacing:-.3px}
+.mbds .n{position:absolute;left:10.4px;top:24px;width:29px;height:29px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:400 17px/1 var(--num);letter-spacing:-.3px}
+.mbds .w{position:absolute;left:0;right:0;top:64.5px;font:400 10.5px/12px var(--kr);color:#111}
+.mbds .sat .n,.mbds .sat .w{color:#2c3d9d}.mbds .sun .n,.mbds .sun .w{color:#e8404d}
+.mbds .off .n,.mbds .off .w{color:#cfcfcf}
+.mbds .on .n{background:#000;color:#fff!important}
+.mbf{position:absolute;left:0;right:0;top:81.6px;height:42px;display:flex;gap:0;padding:0 10px;border-bottom:.7px solid #d6d6d6;background:#fff;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap}
+.mbf button{position:relative;flex:none;padding:1.5px 16px 0;font:400 13.2px/40.5px var(--kr);color:#8b8b8b;letter-spacing:-.4px}
+.mbf button.on{color:#111}
+.mbf button.on:after{content:'';position:absolute;left:9px;right:9px;bottom:-.7px;height:1.9px;background:#000}
+.mbtt{top:124.3px}
+.mbtt .tt-g:first-child{padding-top:18.3px}
+.mbtt .tt-g .ln{font-size:12.9px}
+.tt-c.sold .tm,.tt-c.sold .tm small,.tt-c.sold .rm,.tt-c.sold .hl{color:#c4c4c4}.tt-c.sold{border-color:#e6e6e6}
+.mbempty{padding-top:122px;text-align:center}
+.mbempty svg{display:block;margin:0 auto}
+.mbempty p{margin:13px 0 0;font:400 13.6px/20.7px var(--kr);color:#222;letter-spacing:-.4px}
+/* 회차 시트 · 웹 알림(내비 아래가 아니라 화면 위 전체를 덮고, 탭바는 덮지 않음) */
+.mbsh{position:absolute;left:0;right:0;top:0;bottom:94px;z-index:15;background:rgba(0,0,0,0);transition:background .25s}
+.mbsh.on{background:rgba(0,0,0,.5)}
+.mbsh .in{position:absolute;left:0;right:0;bottom:0;height:467.6px;border-radius:9px 9px 0 0;overflow:hidden;background:#f8f8f8;transform:translateY(100%);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.mbsh.on .in{transform:none}
+.mbsh .hd{position:relative;height:81.6px;background:#fff;padding:10px 0 0 84px}
+.mbsh .hd img{position:absolute;left:20px;top:9.8px;width:43px;height:61px;object-fit:cover}
+.mbsh .hd div{display:flex;flex-direction:column}
+.mbsh .hd b{font:400 15.2px/19px var(--kr);color:#111;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+.mbsh .hd small{font:400 10.6px/15px var(--kr);color:#555;letter-spacing:-.3px}
+.mbsh .hd small:first-of-type{margin-top:3.4px}
+.mbsh .hd button{position:absolute;right:20px;top:29.2px;width:52px;height:24.6px;border:1px solid #333;border-radius:12.3px;background:#fff;font:400 11.5px/1 var(--kr);color:#111}
+.mbsh .bd{position:relative;height:386px}
+.mbsh .scr-l{position:absolute;left:0;right:0;top:14px;text-align:center;font:400 12.6px/16px var(--num);letter-spacing:4.6px;color:#9a9a9a}
+.mbdots{position:absolute;top:33.5px}
+.mbdots i{position:absolute;display:block}
+.mbsh .rem{position:absolute;left:0;right:0;top:174px;margin:0;text-align:center;font:400 15.4px/20px var(--kr);color:#222;letter-spacing:-.4px}
+.mbsh .rem b{font-weight:400;color:var(--green)}
+.mbsh .rt{position:absolute;left:0;right:0;top:266px;margin:0;text-align:center;font:400 12.8px/19px var(--kr);color:#222;letter-spacing:-.4px}
+.mbsh .rt .rb{width:15px;height:15px;vertical-align:-3px;margin-right:3px}
+.mbsh .go{position:absolute;left:20px;right:20px;top:325px;height:44.7px;border-radius:4px;background:#eb3f46;color:#fff;font:400 15.2px/1 var(--kr);letter-spacing:-.4px}
+.mbal{position:absolute;left:0;right:0;top:0;bottom:0;z-index:30;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:116px 0 94px}
+.mbal.under{bottom:94px;padding-bottom:0}
+.wal{width:386.8px;background:#fff;border-radius:6px;overflow:hidden}
+.wal h4{margin:0;height:48.6px;border-bottom:1.3px solid #e6e6e6;font:400 15.2px/48.6px var(--kr);color:#111;text-align:center;letter-spacing:-.4px}
+.wal p{margin:0;padding:21.5px 19.4px 18px;font:400 14.3px/20.1px var(--kr);color:#111;letter-spacing:-.5px;text-align:left;word-break:keep-all}
+.wal p.only{padding:23.4px 19.4px 25.3px}
+.wal button{display:block;width:100%;height:50.4px;border-top:1.3px solid #e9e9e9;background:#f8f8f8;font:400 14.3px/1 var(--kr);color:#111}
 </style>
 <aside class="side">
 <h1>롯데시네마 앱 · 현재 화면</h1>
@@ -583,8 +690,9 @@ button.c{padding:0;background:none;cursor:pointer}
 <li>날짜 · 전체/스페셜 · 시간 칩</li>
 <li>회차 → 인원 → 좌석</li>
 <li>메뉴 → 스페셜관 / 영화관</li>
+<li>메뉴 → 영화별 예매: 영화 → 영화관 → 날짜/시간 → 회차 → 인원</li>
 </ol>
-<p><b>상영시간표</b><br>전국 126개 영화관 · 오늘부터 8일. 회차는 영화관마다 하루 70–85개로, 시간대가 군데군데 비고 영화 · 관마다 시작 시각이 달라요. 어느 영화관 · 날짜를 골라도 개봉한 모든 영화에 낮 12시 이후 회차가 하나 이상 있고, 스페셜관 회차는 인기 영화는 매일 · 나머지는 며칠씩 있어요(개봉 전 영화는 개봉일부터). 영화관마다 스페셜관 종류는 4–5개예요. 월드타워 금 · 토 · 일은 실제로 딴 시간표를 줄여 쓰고(저녁 8시 이후 스페셜관은 그대로) 빠진 영화를 22관부터 덧붙였어요. 예매는 열 때마다 '영화관 예매' 처음 화면부터 시작해요. 같은 날이면 누가 열어도 같고, 예매 시트 · 영화관 상세 · 영화 '예매하기' 어디로 들어가도 같은 회차가 나와요.</p>
+<p><b>상영시간표</b><br>전국 126개 영화관 · 오늘부터 8일. 회차는 영화관마다 하루 70–85개로, 시간대가 군데군데 비고 영화 · 관마다 시작 시각이 달라요. 어느 영화관 · 날짜를 골라도 개봉한 모든 영화에 낮 12시 이후 회차가 하나 이상 있고, 스페셜관 회차는 인기 영화는 매일 · 나머지는 며칠씩 있어요(개봉 전 영화는 개봉일부터). 영화관마다 스페셜관 종류는 4–5개예요. 월드타워 금 · 토 · 일은 실제로 딴 시간표를 줄여 쓰고(저녁 8시 이후 스페셜관은 그대로) 빠진 영화를 22관부터 덧붙였어요. 예매는 열 때마다 '영화관 예매' 처음 화면부터 시작해요. 같은 날이면 누가 열어도 같고, 예매 시트 · 영화관 상세 · 영화 '예매하기' · 메뉴 '영화별 예매' 어디로 들어가도 같은 회차가 나와요.</p>
 <p><b>담은 데이터</b><br>극장 목록 전체, 영화 58편, 영화 상세 64편, 홈 배너 · 이벤트 상세. 메뉴 &gt; 영화 · 영화 상세 · 스페셜관 안내는 공식 사이트 원본(글 · 포스터 · 사진)으로 다시 그렸어요.</p>
 <p><b>좌석</b><br>좌석 배치는 월드타워 각 관 캡처에서 땄고, 팔린 자리는 회차의 남은 좌석 수에 맞춰 임의로 칠했어요. 다른 영화관 · 12관은 좌석 수가 비슷한 월드타워 관 배치를 빌려 써요. 인원을 안 고르고 '좌석 선택'을 누르면 실제처럼 안내가 떠요.</p>
 <p><b>스페셜관 9종</b><br>샤롯데 · 수퍼플렉스 · 수퍼LED · 수퍼MX4D · 광음시네마 · 광음LED · 리클라이너 · 씨네패밀리 · 씨네커플. 안내 팝업과 좌석 배치는 종류마다 대표 관에서 딴 것을 써요. 씨네패밀리는 4 · 6인 부스라 2명은 좌석을 고를 수 없어요(실제와 같음).</p>
@@ -1182,7 +1290,129 @@ function openMenu(){const w=document.createElement('div');w.className='drawer';
   $('#phone').appendChild(w);requestAnimationFrame(()=>w.classList.add('on'));const t0=Date.now();
   const close=()=>{w.classList.remove('on');setTimeout(()=>w.remove(),300)};
   w.addEventListener('click',e=>{if(Date.now()-t0<350)return;if(e.target.classList.contains('dr-dim'))return close();const a=e.target.closest('[data-mgo]');if(!a)return;e.preventDefault();const g=a.dataset.mgo;
-    if(g==='close')return close();close();if(g==='bookm'){BK.tab='movie';return openBooking({tab:'movie'})}if(g==='bookt')return openBooking({tab:'theater'});setTimeout(()=>go(g),50)})}
+    if(g==='close')return close();close();if(g==='bookm')return openMB();if(g==='bookt')return openBooking({tab:'theater'});setTimeout(()=>go(g),50)})}
+
+/* ---------- 메뉴 > 영화별 예매(v32, 2026-10-25 미러링 캡처 캡처/mb) ---------- */
+// 앱 안에 띄운 웹 화면: 위 3단계(영화 선택 · 영화관 선택 · 날짜/시간 선택) 검정 띠 + 단계별 본문. 하단 예매 시트(openBooking)와 다른 화면
+//  영화: 예매순(홈 '지금 인기있는' 순서, 개봉예정 포함 = 실제와 같음) · 예정작(개봉일 순, 순위 없음) · 관객순(누적 관객 순)
+//  영화관: 일반관(지역 · MY · 가까운) / 스페셜관(9종 → 그 종류가 있는 영화관, cfgOf 기준) · 고른 영화가 8일 안에 없는 영화관은 회색(누르면 안내)
+//  날짜/시간: 날짜 줄 + 전체 · 일반관 · 스페셜관 · Atmos · 13시 이후 · 19시 이후 · 심야(22시 이후 시작) → 회차 → 안내 팝업 → 아래 시트(미니 좌석도) → 인원 화면
+//  회차 · 스페셜관 · 날짜는 schedOf(예매 시트 · 영화관 상세와 같은 시간표). 알림은 웹 알림 모양(wAlert)
+const MBF=[['all','전체'],['gen','일반관'],['sp','스페셜관'],['atmos','Atmos'],['13','13시 이후'],['19','19시 이후'],['late','심야']];
+const MBSP=[['CHARLOTTE','샤롯데'],['SPLEX','수퍼플렉스'],['MX4D','수퍼MX4D'],['수퍼LED','수퍼LED'],['광음시네마','광음시네마'],['광음LED','광음LED'],['리클라이너','리클라이너'],['cineFamily','씨네패밀리'],['씨네커플','씨네커플']];
+// 영화관을 고르면 뜨는 영화관 안내(캡처한 평촌만)
+const MBTHN={'평촌(범계역)':{t:'■ 평촌(범계역)관 주차 안내 ■',x:'주말 및 공휴일 주차장이 매우 혼잡하오니 맞은편<br>"롯데식품관" 주차장 이용을 부탁드립니다.<br><br>■ 정산 방법 : 주차 무인정산기 이용하여 티켓 하단<br>주차권 사용 정산 후 출차<br><br>■ 무인정산기 위치<br>- 식품관 2층, 지하1층~지하2층<br>- 백화점 지하3층~지하5층 에스컬레이터 및<br>지하3층~지하7층 B2 구역 위치',under:1}};   // 줄바꿈은 캡처 그대로, 날짜/시간 화면이 뜬 뒤 그 위에(탭바는 안 덮음)
+const MB={};
+const MB0={step:'mv',tab:'rank',movie:null,th:null,thTab:'gen',reg:'MY 영화관',spk:'CHARLOTTE',date:null,filter:'all'};
+// 웹 알림: 흰 상자(제목이 있으면 가운데 + 줄) + 왼쪽 정렬 글 + 회색 띠 '확인'. 화면 안(내비 아래 · 탭바 위) 가운데
+function wAlert(host,o,done){const m=document.createElement('div');m.className='mbal'+(o.under?' under':'');
+  m.innerHTML=`<div class="wal">${o.t?`<h4>${o.t}</h4>`:''}<p class="${o.t?'':'only'}">${o.x}</p><button data-ok>확인</button></div>`;
+  host.appendChild(m);m.addEventListener('click',e=>{if(!e.target.closest('[data-ok]'))return;m.remove();done&&done()})}
+// 관 안내 팝업(예매 시트에서는 앱 팝업 모양)을 웹 알림으로: 글은 같은 TPOP · txt, 줄바꿈은 상자 폭에 맞춰 다시
+function wPops(host,list,done){if(!list||!list.length)return done();const p=list[0],k=p.src&&p.src.split('/').pop().replace(/\.\w+$/,''),T=p.txt?{t:p.title,x:p.txt}:TPOP[k];
+  if(!T||T.ios)return wPops(host,list.slice(1),done);
+  wAlert(host,{t:T.t?T.t.replace(/\.?$/,'.'):'',x:T.x.split('<br><br>').map(p=>p.replace(/<br>/g,' ')).join('<br><br>')},done)}   // 웹에서는 첫 안내 하나만 뜸(11관 샤롯데 프라이빗: 앱 시트는 두 장, 웹은 한 장)
+const mbRel=t=>relOK(t,D.today);
+const mbDday=t=>{const r=(D.movies[t]||{}).rel;return r?Math.round((new Date(r.replace(/\./g,'-')+'T00:00')-new Date(D.today+'T00:00'))/864e5):0};
+const mbAud=t=>+String((D.movies[t]||{}).aud||(ML.mv[t]||{}).aud||0).replace(/\D/g,'');
+function mbList(tab){const L=D.movieOrder.filter(t=>D.movies[t]);
+  if(tab==='soon')return L.filter(t=>!mbRel(t)).sort((a,b)=>D.movies[a].rel.localeCompare(D.movies[b].rel)||L.indexOf(a)-L.indexOf(b));
+  if(tab==='aud')return L.slice().sort((a,b)=>mbAud(b)-mbAud(a)||L.indexOf(a)-L.indexOf(b));
+  return L}
+const MBI={clock:'<svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="4.7" fill="none" stroke="#111" stroke-width="1"/><path d="M5.5 2.8v2.9L3.7 7" fill="none" stroke="#111" stroke-width="1"/></svg>',
+  chk:'<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13.3" fill="#fff" stroke="#c8c8c8" stroke-width="1"/><path d="m8.6 14.2 3.7 3.7 7.2-7.4" fill="none" stroke="#b9b9b9" stroke-width="1.3"/></svg>',
+  arr:'<svg width="5" height="8" viewBox="0 0 5 8"><path d="m1 1 3 3-3 3" fill="none" stroke="#111" stroke-width="1.1"/></svg>',
+  rchk:'<svg width="10" height="8" viewBox="0 0 10 8"><path d="m1 3.8 2.8 2.8L9 1.2" fill="none" stroke="#e8404d" stroke-width="1.1"/></svg>',
+  cal:'<svg width="37" height="37" viewBox="0 0 37 37"><rect x="5" y="7.5" width="27" height="25" rx="3.5" fill="none" stroke="#c4c4c4" stroke-width="2"/><path d="M5 14h27M12 4.5v6M25 4.5v6" stroke="#c4c4c4" stroke-width="2" stroke-linecap="round"/><path d="m13.3 22.6 3.6 3.6 6.8-7" fill="none" stroke="#c4c4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'};
+function mbRow(t,rank){const m=D.movies[t],v=ML.mv[t]||{},up=!mbRel(t),dd=up?mbDday(t):0,g=v.tag;
+  return `<div class="mbr" data-mbmv="${esc(t)}"><span class="po"><img src="${m.hp||m.p}" alt="" loading="lazy" decoding="async">${rateBadge(m.r,'rb')}${rank?`<b class="rk">${rank}</b>`:''}</span>
+    <div class="tx">${g===1||g===2?`<img class="tg" src="assets/poster_hd/tag${g}.webp" alt="${g===1?'롯시플':'롯시픽'}">`:''}<b class="t">${esc(m.t)}</b>
+    <p class="d"><span>개봉일</span>${m.rel||''}${up&&dd>0?`<i></i><em>D-${dd}</em>`:''}</p><p class="r">${MBI.clock}<b>${m.run||v.run||''}</b>분<i></i><a href="#" data-mbinfo="${esc(t)}">상세정보 ${MBI.arr}</a></p></div><span class="ck">${MBI.chk}</span></div>`}
+// 이 영화 · 영화관의 날짜별 회차(지난 회차 뺌)
+function mbSes(th,t,dt){return ((schedOf(th)[dt])||[]).filter(s=>s.m===t&&!isPast(dt,s.s))}
+const MBHAS={};
+// 일반관: 시간표 규칙(v18 · v22)상 개봉한 영화는 모든 영화관에서 매일 상영 → 8일 안에 개봉하면 있음(시간표를 만들지 않아 빠름). 스페셜관 종류는 시간표로 확인
+function mbHas(th,t,spl){if(!spl)return relOK(t,D.dates[D.dates.length-1].id);const k=th+'|'+t+'|'+spl;if(k in MBHAS)return MBHAS[k];return MBHAS[k]=D.dates.some(d=>mbSes(th,t,d.id).some(s=>!spl||s.spl===spl))}
+const mbThName=t=>Array.isArray(t)?t[0]:t;
+function mbSpThs(k){return THEATERS.filter(th=>cfgOf(th).halls.some(h=>h.spl===k))}
+function mbSteps(){const m=MB.movie&&D.movies[MB.movie],dt=MB.date||D.today;
+  const cell=(k,lab,val,on)=>`<button data-mbstep="${k}" class="${on?'on':''}">${val?`<small>${lab}</small><b>${esc(val)}</b>`:`<b class="one">${lab==='날짜/시간'?'날짜 / 시간':lab} 선택</b>`}</button>`;
+  return `<div class="mbsteps">${cell('mv','영화',m&&m.t,MB.step==='mv')}${cell('th','영화관',MB.th,MB.step==='th')}${cell('dt','날짜/시간',m?dt:'',MB.step==='dt')}</div>`}
+function mbMovieStep(){const L=mbList(MB.tab);
+  return `<div class="mbsub">${[['rank','예매순'],['soon','예정작'],['aud','관객순']].map(([k,l])=>`<button data-mbtab="${k}" class="${MB.tab===k?'on':''}">${l}</button>`).join('')}</div>
+  <div class="mbbody" data-mbsc>${L.map((t,i)=>mbRow(t,MB.tab==='soon'?0:i+1)).join('')}<div style="height:94px"></div></div>`}
+function mbThStep(){const t=MB.movie;let left='',right='';
+  if(MB.thTab==='gen'){
+    left=D.regions.map(([n,l])=>{const c=n==='MY 영화관'?0:l.filter(x=>mbHas(mbThName(x),t)).length;return `<button data-mbreg="${esc(n)}" class="${n===MB.reg?'on':''}">${esc(n)}<small>(${c})</small>${n===MB.reg?MBI.rchk:''}</button>`}).join('');
+    const l=(D.regions.find(r=>r[0]===MB.reg)||[0,[]])[1];
+    right=l.length?l.map(x=>{const nm=mbThName(x),ok=mbHas(nm,t);return `<button data-mbth="${esc(nm)}" class="${ok?'':'off'}">${esc(nm)}${Array.isArray(x)?`<span>${x[1].replace('.0KM','km').replace('KM','km')}</span>`:''}</button>`}).join('')
+      :`<div class="mbmy"><p>MY 영화관을 등록 후<br>이용해 주세요.</p><button data-mbmy>MY 영화관 설정</button></div>`;
+  }else{
+    left=MBSP.map(([k,n])=>{const c=mbSpThs(k).filter(th=>mbHas(th,t,k)).length;return `<button data-mbspk="${k}" class="${k===MB.spk?'on':''}">${n}<small>(${c})</small>${k===MB.spk?MBI.rchk:''}</button>`}).join('');
+    right=mbSpThs(MB.spk).map(th=>`<button data-mbth="${esc(th)}" class="${mbHas(th,t,MB.spk)?'':'off'}">${esc(th)}</button>`).join('');
+  }
+  return `<div class="mbthtabs"><button data-mbtht="gen" class="${MB.thTab==='gen'?'on':''}">일반관</button><button data-mbtht="sp" class="${MB.thTab==='sp'?'on':''}">스페셜관</button></div>
+  <div class="mbth"><div class="l">${left}</div><div class="r" data-mbsc>${right}<div style="height:94px"></div></div></div>`}
+function mbFilter(s){const f=MB.filter;return f==='all'||(f==='gen'&&!s.spl)||(f==='sp'&&!!s.spl)||(f==='atmos'&&(s.c||[]).some(c=>/^Atmos/.test(c)))||(f==='13'&&hhmm(s.s)>=780)||(f==='19'&&hhmm(s.s)>=1140)||(f==='late'&&hhmm(s.s)>=1320)}
+function mbDtStep(){const t=MB.movie,th=MB.th,dt=MB.date||D.today;let mo='';
+  const ds=D.dates.map((d,i)=>{const m=+d.id.slice(5,7),lab=m!==mo?`<b class="mo">${m}월</b>`:'';mo=m;const has=mbSes(th,t,d.id).length>0,w=d.id===D.today?'오늘':d.w;
+    return `<button data-mbdt="${d.id}" class="${d.id===dt?'on':''} ${has?'':'off'} ${d.w==='토'?'sat':''} ${d.w==='일'?'sun':''}" style="left:${(9+i*49.8).toFixed(1)}px">${lab}<span class="n">${+d.id.slice(8)}</span><span class="w">${w}</span></button>`}).join('');
+  const L=mbSes(th,t,dt).filter(mbFilter),gs={};
+  L.forEach(s=>{const hn=(hallInfo(s).name||s.h+'관').replace(/\s*\(\d+층\)$/,''),c=s.c||[],lang=c.find(x=>/^(자막|더빙)$/.test(x))||'';
+    const parts=['2D',...(lang?[lang]:[]),...c.filter(x=>TT_CHIP[x]).map(x=>TT_CHIP[x]),...(s.spl&&SPK[s.spl]?[SPK[s.spl].lb]:[]),hn],key=parts.join('|');
+    (gs[key]=gs[key]||{parts,sp:!!s.spl,lang:lang==='자막'?0:lang==='더빙'?1:2,h:s.h,desc:/소파석/.test(hn)?TT_DESC.sofa:/SUPER LED/.test(hn)?TT_DESC.led:'',l:[]}).l.push(s)});
+  const G=Object.values(gs).sort((a,b)=>(b.sp-a.sp)||(a.lang-b.lang)||(a.h-b.h));
+  const body=G.length?G.map(g=>`<div class="tt-g"><div class="ln"><span>${g.parts.map(esc).join('<i></i>')}</span>${g.desc?`<small>${g.desc}</small>`:''}</div>
+    <div class="tt-cs">${g.l.sort((a,b)=>hhmm(a.s)-hhmm(b.s)).map(s=>s.r===0?`<a href="#" class="tt-c sold" data-mbsold><span class="tm">${s.s}<small>~ ${s.e}</small></span><span class="rm">매진</span><span class="hl">${s.h}관</span></a>`
+      :`<a href="#" class="tt-c" data-mbses="${esc(s.id)}"><span class="tm">${s.s}<small>~ ${s.e}</small></span><span class="rm"><b>${s.r}</b> / ${s.t}</span><span class="hl">${s.h}관</span></a>`).join('')}</div></div>`).join('')
+    :`<div class="mbempty">${MBI.cal}<p>현재 선택하신 날짜의<br>상영 시간표를 준비하고 있습니다.</p></div>`;
+  return `<div class="mbds" data-mbhs>${ds}</div><div class="mbf" data-mbhs>${MBF.map(([k,l])=>`<button data-mbf="${k}" class="${MB.filter===k?'on':''}">${l}</button>`).join('')}</div>
+  <div class="mbbody mbtt" data-mbsc>${body}<div style="height:110px"></div></div>`}
+// 회차 시트(웹): 포스터 · 제목 · 일시 · 관, 미니 좌석도(남은 자리 검정 · 팔린 자리 회색 · 장애인석 초록), 잔여좌석, 관람등급 안내, 인원 및 좌석 선택
+function mbDots(s){const L=layoutOf(s);if(!L)return '';const sold=soldOf(s,L),q=L.seats;
+  const x0=Math.min(...q.map(a=>a[1])),x1=Math.max(...q.map(a=>a[1]+a[3])),y0=Math.min(...q.map(a=>a[2])),y1=Math.max(...q.map(a=>a[2]+a[4]));
+  const k=Math.min(238/(x1-x0),112/(y1-y0)),w=(x1-x0)*k,ox=(430-w)/2;
+  return `<div class="mbdots" style="left:${ox.toFixed(1)}px;width:${w.toFixed(1)}px;height:${((y1-y0)*k).toFixed(1)}px">${q.map(a=>`<i style="left:${((a[1]-x0)*k).toFixed(1)}px;top:${((a[2]-y0)*k).toFixed(1)}px;width:${(a[3]*k*.78).toFixed(1)}px;height:${(a[4]*k*.78).toFixed(1)}px;background:${sold.has(a[0])?'#cfcfcf':a[5]==='g'?'#4f7d5c':'#000'}"></i>`).join('')}</div>`}
+function mbSheet(el,s){const m=D.movies[s.m]||{t:s.m},hi=hallInfo(s),run=hhmm(s.e)-hhmm(s.s)+(hhmm(s.e)<hhmm(s.s)?1440:0);
+  const lang=(s.c||[]).find(c=>/자막|더빙/.test(c));
+  const w=document.createElement('div');w.className='mbsh';
+  w.innerHTML=`<div class="in"><div class="hd">${m.hp||m.p?`<img src="${m.hp||m.p}" alt="">`:''}<div><b>${esc(m.t)} (2D${lang?'/'+lang:''})</b><small>${s.dt.slice(2).replace(/-/g,'.')} (${DOWK[dowOf(s.dt)]}) · ${s.s} ~ ${s.e} (${run}분)</small><small>${esc(s.th)} · ${esc((hi.name||s.h+'관').replace(/\s+\(/,'('))}</small></div><button data-mbx>닫기</button></div>
+  <div class="bd"><span class="scr-l">SCREEN</span>${mbDots(s)}<p class="rem">잔여좌석 <b>${s.r}</b> / ${s.t}석</p><p class="rt">${ratingNotice(m)}</p><button class="go" data-mbgo>인원 및 좌석 선택</button></div></div>`;
+  el.appendChild(w);void w.offsetWidth;w.classList.add('on');
+  w.addEventListener('click',e=>{if(e.target===w||e.target.closest('[data-mbx]')){w.classList.remove('on');return setTimeout(()=>w.remove(),250)}
+    if(e.target.closest('[data-mbgo]')){if(isPast(s.dt,s.s))return toast('상영 시간이 지난 회차예요.');BK_FROM=false;SES=s;Object.assign(PEOPLE,{성인:0,청소년:0,경로:0,장애인:0});openPeople()}})}   // 인원 화면 뒤로 = 시트가 열린 채로(실제와 같음)
+let MBT=0;
+function openMB(){Object.assign(MB,MB0,{date:D.today});MBT=Date.now();
+  const el=scr('','mb');el.dataset.page='mb';
+  const draw=()=>{const sc=[...el.querySelectorAll('[data-mbhs]')].map(x=>x.scrollLeft);
+    el.innerHTML=`${mbSteps()}<div class="mbst">${MB.step==='mv'?mbMovieStep():MB.step==='th'?mbThStep():mbDtStep()}</div>${navBar('예매')}${tabBar('')}`;
+    wireNav(el);wireTabs(el);el.querySelectorAll('[data-mbhs]').forEach((x,i)=>{if(sc[i]!=null)x.scrollLeft=sc[i]})};
+  const go=st=>{MB.step=st;draw();const b=el.querySelector('[data-mbsc]');if(b)b.scrollTop=MB['y_'+st]||0};
+  const save=()=>{const b=el.querySelector('[data-mbsc]');if(b)MB['y_'+MB.step]=b.scrollTop};
+  draw();push(el);
+  // 스페셜관 탭은 영화관마다 시간표가 있어야 회색을 가림 → 화면이 뜬 뒤 틈틈이 미리 만들어 둠(처음 누를 때 멈칫하지 않게)
+  {let i=0;const f=()=>{for(let n=0;n<3&&i<THEATERS.length;n++)schedOf(THEATERS[i++]);if(i<THEATERS.length&&document.contains(el))setTimeout(f,30)};setTimeout(f,600)}
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-mbstep],[data-mbtab],[data-mbinfo],[data-mbmv],[data-mbtht],[data-mbreg],[data-mbspk],[data-mbth],[data-mbmy],[data-mbdt],[data-mbf],[data-mbses],[data-mbsold]');if(!b||e.target.closest('.mbal,.mbsh'))return;const d=b.dataset;e.preventDefault();if(Date.now()-MBT<500&&(d.mbmv||d.mbinfo))return;   // 메뉴 '영화별 예매'를 두 번 누르면 두 번째 탭이 같은 자리 첫 영화를 고르지 않게
+    if(d.mbstep){const k=d.mbstep;if(k==='mv'){save();return go('mv')}
+      if(!MB.movie)return wAlert(el,{x:'영화를 선택해주세요'});
+      if(k==='th'){save();return go('th')}
+      if(!MB.th)return wAlert(el,{x:'영화관을 선택해주세요'});save();return go('dt')}
+    if(d.mbtab){if(d.mbtab===MB.tab)return;MB.tab=d.mbtab;const y=el.querySelector('[data-mbsc]').scrollTop;draw();el.querySelector('[data-mbsc]').scrollTop=y;return}   // 실제: 탭을 바꿔도 내려 둔 자리 그대로
+    if(d.mbinfo)return mlOpen(d.mbinfo);
+    if(d.mbmv){save();if(MB.movie!==d.mbmv){MB.movie=d.mbmv;MB.filter='all';MB.y_th=0;MB.y_dt=0}return go(MB.th?'dt':'th')}   // 영화관을 이미 골랐으면 바로 날짜/시간
+    if(d.mbtht){MB.thTab=d.mbtht;MB.y_th=0;return go('th')}
+    if(d.mbreg){MB.reg=d.mbreg;MB.y_th=0;return go('th')}
+    if(d.mbspk){MB.spk=d.mbspk;MB.y_th=0;return go('th')}
+    if('mbmy' in d)return toast('MY 영화관 설정은 로그인 정보가 바뀌는 기능이라 담지 않았어요.');
+    if(d.mbth){if(b.classList.contains('off'))return toast('선택한 영화를 상영하지 않는 영화관이에요.');   // 실제는 반응 없음, 15절(회색은 누르면 이유) 따라 안내
+      save();const th=d.mbth;MB.th=th;MB.filter='all';MB.y_dt=0;go('dt');if(MBTHN[th])wAlert(el,MBTHN[th]);return}
+    if(d.mbdt){MB.date=d.mbdt;MB.y_dt=0;return go('dt')}
+    if(d.mbf){MB.filter=d.mbf;MB.y_dt=0;return go('dt')}
+    if('mbsold' in d)return toast('매진된 회차예요.');   // 실제는 반응 없음, 15절 따라 안내
+    if(d.mbses){const s=findSes(d.mbses);if(!s)return;if(isPast(s.dt,s.s))return toast('상영 시간이 지난 회차예요.');const hi=hallInfo(s);
+      return wPops(el,hi.pops||(hi.notice?[{title:'알려드립니다',txt:hi.notice}]:[]),()=>mbSheet(el,s))}
+  });
+  return el}
 
 /* ---------- 영화관 상세에서 회차를 누르면 뜨는 시트 ---------- */
 function openSessionSheet(id){const s=findSes(id);if(!s)return toast('이 회차 정보는 캡처하지 않았어요.');const m=D.movies[s.m]||{t:s.m},hi=hallInfo(s);
@@ -1363,7 +1593,7 @@ function buildHome(){const H=D.home,X=HD();
   const car=el.querySelector('[data-carousel]');car.scrollLeft=258;requestAnimationFrame(()=>car.scrollLeft=258);let t=setInterval(()=>{if(!el.classList.contains('top'))return;const w=258;if(car.scrollLeft+car.clientWidth>=car.scrollWidth-4)car.scrollTo({left:258,behavior:'smooth'});else car.scrollBy({left:w,behavior:'smooth'})},3000);
   ['pointerdown','wheel','touchstart'].forEach(ev=>car.addEventListener(ev,()=>{clearInterval(t)},{passive:true}));
 }
-window.P={popImgs,openBooking,openPage,openMovies,openMD,openSession,openTheater,goHome,BK,renderBK,schedOf,cfgOf,findSes,layoutOf,hallInfo,soldOf};
+window.P={openMB,MB,popImgs,openBooking,openPage,openMovies,openMD,openSession,openTheater,goHome,BK,renderBK,schedOf,cfgOf,findSes,layoutOf,hallInfo,soldOf};
 window.addEventListener('DOMContentLoaded',()=>{
   // 홈 화면에서 연 앱(standalone): 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
   const SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
