@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none}</style>
-<script>window.__V='71ef17368c';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='1486de9de6';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 As-Is 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -1108,7 +1108,7 @@ function moviePanel(){
   <div class="mvgrid">${ids.map(id=>{const m=D.movies[id];return `<button data-mv="${esc(id)}" class="${m.hp?"hd":""}" aria-label="${esc(m.t)}">${m.hp?`<img src="${m.hp}" alt="${esc(m.t)}" decoding="async">${rateBadge(m.r,'rb')}<span class="mt">${esc(m.t)}</span>`:m.p?`<img src="${m.p}" alt="${esc(m.t)}" decoding="async">`:''}</button>`}).join('')}</div></div>`}
 sheet.addEventListener('click',e=>{const t=e.target.closest('button,[data-pick]');if(t&&Date.now()-BKT<500&&(t.dataset.mv!==undefined||t.dataset.ses!==undefined||t.dataset.th!==undefined))return;if(BK.sortOpen&&!(t&&('sort' in t.dataset||t.dataset.srt))){BK.sortOpen=false;const pm=sheet.querySelector('#pMv');if(pm)pm.innerHTML=moviePanel();if(!t||t.dataset.mv===undefined)return}if(!t)return;const d=t.dataset;
   if('close' in d)return closeBooking();
-  if(d.bt){BK.tab=d.bt;if(BK.tab==='movie'&&!BK.movie){BK.panel='mv';}return renderBK()}
+  if(d.bt){BK.tab=d.bt;if(BK.tab==='movie'){BK.panel='mv';BK.sortOpen=false;BKT=Date.now()}return renderBK()}   // '영화 예매' 탭은 영화를 이미 골랐어도 늘 영화 선택 화면부터(실제 앱과 같게)
   if(d.pick!==undefined){e.stopPropagation();BK.picking=+d.pick;BK.panel='th';BK.region=null;return renderBK()}
   if(d.slot!==undefined){BK.active=+d.slot;return renderBK()}
   if(d.date){BK.date=d.date;return renderBK()}
